@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include "util.h"
 #include "add_1d.h"
+#include "img_generator.h"
+#include <opencv2/imgcodecs.hpp>
 
 __global__ void sumMatrix(float * A, float * B, float * C, int nx, int ny) {
     int ix = threadIdx.x + blockDim.x * blockIdx.x;
@@ -30,10 +32,19 @@ void printData(float *arr, int size, const char* tag) {
     printf("\n");
 }
 
-int main(int argc, char ** argv) {
-    printf("starting...\n");
-    initDevice(0);
+void printData(unsigned char *arr, int size, const char* tag) {
+    printf("\n%s", tag);
+    int maxs = size > 512 ? 512 : size;
+    for (int i = 0; i < maxs; i++) {
+        if ((i % 64) == 0) {
+            printf("\n");
+        }
+        printf("%d,", arr[i]);
+    }
+    printf("\n");
+}
 
+void call_calc() {
     int nx = 1<<12;
     int ny = 1<<12;
     int nBytes = nx * ny * sizeof(float);
@@ -75,6 +86,20 @@ int main(int argc, char ** argv) {
     cudaFree(C_device);
     free(A_host);
     free(B_host);
+}
+
+int main(int argc, char ** argv) {
+    printf("starting...\n");
+    initDevice(0);
+
+    // call_calc();
+
+    //
+    cv::Mat img(256, 256, CV_8UC3);
+    generate_bgr_1d(&img);
+    printData(img.data, 255, "===img data=====");
+    cv::imwrite("/tmp/gen_1d.jpg", img);
+
     cudaDeviceReset();
     return 0;
 }

@@ -56,7 +56,11 @@ void assume_1d_thread_grid(dim3 *grid, dim3 *block, int size) {
     block->x = threadSize;
     block->y = 1;
     block->z = 1;
-    grid->x = ceil(size / (float)threadSize);
+    assume_1d_grid_by_block(grid, *block, size);
+}
+
+void assume_1d_grid_by_block(dim3 *grid, dim3 block, int size) {
+    grid->x = ceil(size / (float)block.x);
     grid->y = 1;
     grid->z = 1;
 }

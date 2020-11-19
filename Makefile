@@ -13,17 +13,20 @@ OUTNAME := gpu_demo
 CFLAGS := -std=c++11 -g -fPIC -m64 -fopenmp -w -O3 -pthread
 CUFLAGS := -std=c++11 -g -m64 -Xcompiler -w -O3
 INC_CUDA := /usr/local/cuda/include 
-INCS := $(INC_CUDA)
+INC_OPENCV := /usr/local/opencv4.2.0/include/opencv4
+INCS := $(INC_OPENCV) $(INC_CUDA)
 INCS := $(foreach inc, $(INCS), -I$(inc))
 
 LIB_CUDA := /usr/local/cuda/lib64
-LIBS := $(LIB_CUDA)
+LIB_OPENCV := /usr/local/opencv4.2.0/lib64
+LIBS := $(LIB_OPENCV) $(LIB_CUDA)
 RPATH := $(foreach lib, $(LIBS),-Wl,-rpath=$(lib))
 LIBS := $(foreach lib, $(LIBS),-L$(lib))
 
+LD_OPENCV := opencv_core opencv_highgui opencv_imgproc opencv_imgcodecs
 LD_CUDA := cuda cudart curand
 LD_SYS := dl stdc++ pthread
-LDS := $(LD_CUDA) $(LD_SYS)
+LDS := $(LD_OPENCV) $(LD_CUDA) $(LD_SYS)
 LDS := $(foreach lib, $(LDS), -l$(lib))
 
 SRCS := $(shell cd $(SRCDIR) && find -name "*.cpp")
