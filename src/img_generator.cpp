@@ -7,11 +7,11 @@ void generate_bgr_1d(cv::Mat *mat) {
     unsigned char *data = NULL;
     int size = mat->cols * mat->rows * 3 * sizeof(unsigned char);
     printf("img data size = %d\n", size);
-    CHECK(cudaMalloc((void **)&data, size));
-    c_generate_bgr_1d_by_thread_schedule(data, mat->cols, mat->rows);
-    cudaDeviceSynchronize();
+    CHECK_RESULT(cudaMalloc((void **)&data, size));
+    CHECK_ERROR(c_generate_bgr_1d_by_thread_schedule(data, mat->cols, mat->rows));
+    CHECK_RESULT(cudaDeviceSynchronize());
     unsigned char *hdata = (unsigned char *)malloc(size);
-    cudaMemcpy(mat->data, data, size, cudaMemcpyDeviceToHost);
+    CHECK_RESULT(cudaMemcpy(mat->data, data, size, cudaMemcpyDeviceToHost));
     // mat->data = hdata;
-    cudaFree(data);
+    CHECK_RESULT(cudaFree(data));
 }

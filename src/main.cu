@@ -100,6 +100,6 @@ int main(int argc, char ** argv) {
     printData(img.data, 255, "===img data=====");
     cv::imwrite("/tmp/gen_1d.jpg", img);
 
-    cudaDeviceReset();
+    CHECK_RESULT(cudaDeviceReset());
     return 0;
 }
